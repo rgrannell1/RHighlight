@@ -2,11 +2,14 @@
 PRISM = {}
 PRISM.level = 0;
 
-var span_open = function (type) {
-	return '<span class="' + type + '">'
+var span_open = function (class) {
+	return '<span class="' + class + '">'
 }
 var span_close = function () {
 	return '</span>'
+}
+var span = function (class, content) {
+	return '<span class="' + class + '">' + content + '</span>'
 }
 
 var norm_or_paren_rules = function () {
@@ -30,17 +33,17 @@ var norm_or_paren_rules = function () {
 
 open_delim_output = function (level) {
 	return {
-		'(': span_open('lev' + level) + '(' + span_close(),
-		'[': span_open('lev' + level) + '[' + span_close(),
-		'{': span_open('lev' + level) + '{' + span_close()
+		'(': span('lev' + level, '('),
+		'[': span('lev' + level, '['),
+		'{': span('lev' + level, '{')
 	}
 }
 
 close_delim_output = function (level) {
 	return {
-		')': span_open('lev' + level) + ')' + span_close(),
-		']': span_open('lev' + level) + ']' + span_close(),
-		'}': span_open('lev' + level) + '}' + span_close()
+		')': span('lev' + level, ')'),
+		']': span('lev' + level, ']'),
+		'}': span('lev' + level, '}')
 	}
 }
 
@@ -58,8 +61,8 @@ var output_normal_states = function (val) {
 			'"': span_open("dstring") + '"'
 		},
 		'normal': {
-			'$': span_open('dollar') + '$' + span_close(),
-			',': span_open('comma lev' + val) + ',' + span_close(),
+			'$': span('dollar', '$'),
+			',': span('comma lev' + val, ','),
 			'*nomatch*': '*token*'
 		},
 		'comment': {
