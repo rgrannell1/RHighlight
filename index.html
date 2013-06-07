@@ -1,1 +1,67 @@
-hi
+<!DOCTYPE html>
+<html>
+	<head>
+
+		<link href='http://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
+		<link href="less/code-light.less" rel='stylesheet/less' type="text/css"> 
+		<link href="less/styleless.less" rel="stylesheet/less" type="text/css" > 
+
+		<script src="js/less.js/less.js" type="text/javascript"></script>
+		<script src="js/highlight.js" type="text/javascript"></script>
+
+
+	</head>
+	<body onload = "highlight">
+
+	<h1>Example</h1>
+
+	<p>this is a simple test page, featuring code from my library (plug) mchof.</p>
+
+<pre><code id = "r">
+to_pairs <- function (x) {
+	# chunk x into lists of two, where possible
+
+	group_into(x, 2)
+}
+
+iterateWhile <- function (f, p, x) {
+	# pipe the output x of f into f,
+	# until p(x) is true
+
+	while( !p(x) ) x <- f(x)
+	x
+}
+
+mcReduce <- function (f, x, paropts = NULL) {
+	# swaps the commas in x1, x2, x3, ..., xn with
+	# the infix function f.
+
+	func_call <- paste0( deparse(match.call()), ':' )
+
+	f <- match.fun(f)
+
+	if (is.null(x)) return(NULL)
+	if (is.list(x) && length(x) == 0) return(list())
+	if (length(x) == 1) return(x)
+	is.factor(x) %throws% stopf (
+		'%s x may not be a factor; actual value was %s (%s)',
+		func_call, deparse(x), paste0(class(x), collapse = ', '))
+
+	g <- function (x) {
+		if (length(x) == 2) f( x[[1]], x[[2]] ) else x[[1]]	
+	}
+
+	g( iterateWhile (
+		function (reducable) {
+			to_pairs(call_mclapply(g, reducable, paropts))
+		},
+		function (reducable) {
+			length(reducable) == 1
+		},
+	to_pairs(x)) [[1]] )
+
+}
+</code></pre>
+
+	</body>
+</html>
