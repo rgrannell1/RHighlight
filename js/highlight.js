@@ -1,8 +1,6 @@
 "use strict";
 
 HIGHLIGHT = ( function () {
-	// the global variable for the entire highlight app
-
 	return {
 		StateMachine: function (states, outputs) {
 
@@ -52,7 +50,7 @@ HIGHLIGHT = ( function () {
 						this.level -= 1;
 					}
 
-					r_output_rules = output_rules(this.level); ///
+					this.output_rules = output_rules(this.level);
 				}
 
 				token = token + "";
@@ -163,7 +161,6 @@ HIGHLIGHT = ( function () {
 			// The output is dependent on level,
 			// a global variable denoting how many levels nested the state machine
 			// parsing this grammar currently is.
-		 
 
 			var span_open = function (class) {
 				return '<span class="' + class + '">'
