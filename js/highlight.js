@@ -1,71 +1,91 @@
-
-// highlight.r, Ryan Grannell
 "use strict";
 
 HIGHLIGHT = ( function () {
 	// the global variable for the entire highlight app
 
 	return {
-		LEVEL: 0,
-		StateMachine: function (states) {
+		StateMachine: function (states, outputs) {
 
-			this.states = states;
-
-			this.output_token = function (source, target, token) {
-
-				var rules = r_output_rules[source][target];
-				var output_html = token;
-
-				for (var candidate in rules) {
-					if (candidate !== '*nomatch*' && candidate === token) {
-						output_html = rules[candidate];
-					}			
-				}	
-				return output_html;
-			}
+			this.level = 0;
+			this.state_transitions = states;
+			this.output_rules = outputs(level);
 
 			this.consume_token = function (token) {
+				// takes a single token, updates internal state if
+				// the token caused a state -> state transition. returns a
+				// pretty html string to the user.
 
-				var set_LEVEL = function (source, target) {
-					// change r output depth based on transition
+				var html_output = function (source, target, token) {
+					// takes a source state, target state and a token that
+					// triggered the transition. returns a html string that
+					// styles the input token
 
-					var delimiter_opened = source === 'normal' && target === 'open_delim' || 
-						source === 'open_delim' && target === 'open_delim';
-					
-					var delimiter_closed = source === 'close_delim' && target === 'normal' ||
-						source === 'close_delim' && target === 'close_delim';
+					var state_rules = r_output_rules[source][target];
+					var html_string = token;
 
-					if (delimiter_opened) HIGHLIGHT.LEVEL = HIGHLIGHT.LEVEL + 1;
-					if (delimiter_closed) HIGHLIGHT.LEVEL = HIGHLIGHT.LEVEL - 1;
-
-					r_output_rules = output_rules(HIGHLIGHT.LEVEL); ///
+					for (var candidate in state_rules) {
+						if (candidate !== '*nomatch*' && candidate === token) {
+							html_string = state_rules[candidate];
+						}			
+					}	
+					return html_string;
 				}
 
-				token = token + ""
+				var change_level_state = function (source, target) {
+					// change r output depth based on transition
+
+					var delimiter_opened = 
+						(source === 'normal' && 
+							target === 'open_delim') || 
+						(source === 'open_delim' &&
+							target === 'open_delim');
+					
+					var delimiter_closed = 
+						(source === 'close_delim' &&
+							target === 'normal') ||
+						(source === 'close_delim' &&
+							target === 'close_delim');
+
+					if (delimiter_opened) {
+						this.level += 1;
+					} else if (delimiter_closed) {
+						this.level -= 1;
+					}
+
+					r_output_rules = output_rules(this.level); ///
+				}
+
+				token = token + "";
 				
-				for (var s in this.states) {
-					if (states[s].active) {
-						var active = this.states[s];
-						var old_state = s;
+				for (var st in this.state_transitions) {
+					if (state_transitions[st].active) {
+						var active = this.state_transitions[st];
+						var old_state = st;
 					}
 				}
 
-				var new_state = active.edges['*nomatch*']
+				var new_state = active.edges['*nomatch*'];
 
-				for (var e in active.edges) {
-					if (token === e) var new_state = active.edges[e];
+				for (var ed in active.edges) {
+					if (token === ed) new_state = active.edges[ed];
 				}
 
-				this.states[old_state].active = false;
-				this.states[new_state].active = true;
+				this.state_transitions[old_state].active = false;
+				this.state_transitions[new_state].active = true;
 			
-				// alters global; HIGHLIGHT.LEVEL
-				set_LEVEL(old_state, new_state);
+				change_level_state(old_state, new_state);
 
-				return this.output_token(old_state, new_state, token);
+				return html_output(old_state, new_state, token);
 
 			}	
 		},
+		highlight_r_code: ( function () {
+			// alter all class = "r" tags in a html document,
+			// returning code that can be targeted with css
+
+
+
+		} )(),
 		r_state_transitions: ( function () {
 			// returns an object which contains objects - one for each possible state -
 			// which contain an active field (is this the state we're currently on?) and 
