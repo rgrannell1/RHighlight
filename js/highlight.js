@@ -1,6 +1,9 @@
 "use strict";
 
-HIGHLIGHT = ( function () {
+var HIGHLIGHT = ( function () {
+	// global object for highlight.js (great name, huh?).
+	// released under the GLP-3, copyright Ryan Grannell.
+
 	return {
 		StateMachine: function (states, outputs) {
 
@@ -77,13 +80,33 @@ HIGHLIGHT = ( function () {
 
 			}	
 		},
-		highlight_r_code: ( function () {
+		highlight_text: function (text) {
+			// given (presumably legal) R code as a single string, 
+			// return a string of higlighted R code
+
+			var highlighted_code = '';
+			var r_state_machine = new StateMachine(r_rules);
+
+			for (var i = 0; i < code.length; i++) {
+			
+				var token = text.substring(i, i+1);
+				highlighted_code = highlighted_code + r_state_machine.consume_token(token);
+			
+			}
+
+			return highlighted_code
+		},
+		highlight_r_code: function () {
 			// alter all class = "r" tags in a html document,
 			// returning code that can be targeted with css
 
+			$('code .r').replaceWith( function (index, content) {
+				return '<code class = "r">' + 
+					HIGHLIGHT.highlight_text($(this).text()) + 
+				'</code>';
+			} );
 
-
-		} )(),
+		},
 		r_state_transitions: ( function () {
 			// returns an object which contains objects - one for each possible state -
 			// which contain an active field (is this the state we're currently on?) and 
@@ -127,16 +150,16 @@ HIGHLIGHT = ( function () {
 				},
 				'normal': {
 					'active': true,
-					'edges': normal_and_delim_edges()
+					'edges': normal_and_delim_edges
 				},
 				
 				'open_delim': {
 					'active': false,
-					'edges': normal_and_delim_edges()
+					'edges': normal_and_delim_edges
 				},
 				'close_delim': {
 					'active': false,
-					'edges': normal_and_delim_edges()
+					'edges': normal_and_delim_edges
 				},
 				'comment': {
 					'active': false,
@@ -162,14 +185,14 @@ HIGHLIGHT = ( function () {
 			// a global variable denoting how many levels nested the state machine
 			// parsing this grammar currently is.
 
-			var span_open = function (class) {
-				return '<span class="' + class + '">'
+			var span_open = function (css_class) {
+				return '<span class="' + css_class + '">'
 			}
 			var span_close = function () {
 				return '</span>'
 			}
-			var span = function (class, content) {
-				return '<span class="' + class + '">' + content + '</span>'
+			var span = function (css_class, content) {
+				return '<span class="' + css_class + '">' + content + '</span>'
 			}
 
 			var open_delim_output = function (level) {
