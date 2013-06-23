@@ -7,9 +7,11 @@ var HIGHLIGHT = ( function () {
 	return {
 		StateMachine: function (states, outputs) {
 
-			this.level = 0;
-			this.state_transitions = states;
-			this.output_rules = outputs(level);
+			var fsm_state = {
+				level: 0,
+				state_transitions: states,
+				output_rules: outputs( this.level )
+			}
 
 			this.consume_token = function (token) {
 				// takes a single token, updates internal state if
@@ -21,7 +23,7 @@ var HIGHLIGHT = ( function () {
 					// triggered the transition. returns a html string that
 					// styles the input token
 
-					var state_rules = r_output_rules[source][target];
+					var state_rules = fsm_state.output_rules[source][target];
 					var html_string = token;
 
 					for (var candidate in state_rules) {
@@ -32,7 +34,7 @@ var HIGHLIGHT = ( function () {
 					return html_string;
 				}
 
-				var change_level_state = function (source, target) {
+				var change_level_state = function (source, target, level) {
 					// change r output depth based on transition
 
 					var delimiter_opened = 
@@ -48,19 +50,25 @@ var HIGHLIGHT = ( function () {
 							target === 'close_delim');
 
 					if (delimiter_opened) {
-						this.level += 1;
+						level += 1;
 					} else if (delimiter_closed) {
-						this.level -= 1;
+						level -= 1;
 					}
 
-					this.output_rules = output_rules(this.level);
+					fsm_state.level = level;
+					fsm_state.output_rules = HIGHLIGHT.output_rules(level);
+
+					return {
+						"level": level, 
+						"output_rules": HIGHLIGHT.output_rules(level) 
+					}
 				}
 
 				token = token + "";
 				
-				for (var st in this.state_transitions) {
-					if (state_transitions[st].active) {
-						var active = this.state_transitions[st];
+				for (var st in fsm_state.state_transitions) {
+					if (fsm_state.state_transitions[st].active) {
+						var active = fsm_state.state_transitions[st];
 						var old_state = st;
 					}
 				}
@@ -71,26 +79,29 @@ var HIGHLIGHT = ( function () {
 					if (token === ed) new_state = active.edges[ed];
 				}
 
-				this.state_transitions[old_state].active = false;
-				this.state_transitions[new_state].active = true;
+				fsm_state.state_transitions[old_state].active = false;
+				fsm_state.state_transitions[new_state].active = true;
 			
-				change_level_state(old_state, new_state);
+				change_level_state(old_state, new_state, fsm_state.level);
 
 				return html_output(old_state, new_state, token);
 
-			}	
+			}
 		},
 		highlight_text: function (text) {
 			// given (presumably legal) R code as a single string, 
 			// return a string of higlighted R code
 
 			var highlighted_code = '';
-			var r_state_machine = new StateMachine(r_rules);
+			var r_state_machine = new HIGHLIGHT.StateMachine(
+				HIGHLIGHT.r_state_transitions,
+				HIGHLIGHT.output_rules);
 
-			for (var i = 0; i < code.length; i++) {
+			for (var i = 0; i < text.length; i++) {
 			
 				var token = text.substring(i, i+1);
-				highlighted_code = highlighted_code + r_state_machine.consume_token(token);
+				highlighted_code = 
+					highlighted_code + r_state_machine.consume_token(token);
 			
 			}
 
@@ -100,7 +111,7 @@ var HIGHLIGHT = ( function () {
 			// alter all class = "r" tags in a html document,
 			// returning code that can be targeted with css
 
-			$('code .r').replaceWith( function (index, content) {
+			$('.r').replaceWith( function (index, content) {
 				return '<code class = "r">' + 
 					HIGHLIGHT.highlight_text($(this).text()) + 
 				'</code>';
