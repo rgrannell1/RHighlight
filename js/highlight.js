@@ -1,4 +1,8 @@
-"use strict";
+
+
+(function () {
+	"use strict";
+} )()
 
 var HIGHLIGHT = ( function () {
 	// global object for highlight.js (great name, huh?).
@@ -74,7 +78,6 @@ var HIGHLIGHT = ( function () {
 				}
 
 				var new_state = active.edges['*nomatch*'];
-
 				for (var ed in active.edges) {
 					if (token === ed) new_state = active.edges[ed];
 				}
