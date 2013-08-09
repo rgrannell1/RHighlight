@@ -7,8 +7,7 @@ highlight = ( function () {
 	/* global object for highlight.js (great name, huh?).
 	  released under the GLP-3, copyright Ryan Grannell. */
 
-	return {
-		StateMachine: function (states, outputs) {
+		var StateMachine = function (states, outputs) {
 
 			var that = {
 				depth: 0,
@@ -40,7 +39,7 @@ highlight = ( function () {
 					return html_string
 				}
 
-				var change_depth_state = function (source, target, depth) {
+				var change_delimiter_depth = function (source, target, depth) {
 					// change r output depth based on transition
 
 					var delimiter_opened = 
@@ -62,15 +61,13 @@ highlight = ( function () {
 					}
 
 					that.depth = depth
-					that.output_rules = highlight.output_rules(depth)
+					that.output_rules = output_rules(depth)
 
 					return {
 						"depth": depth, 
-						"output_rules": highlight.output_rules(depth) 
+						"output_rules": output_rules(depth) 
 					}
 				}
-
-				token = token + ""
 				
 				for (var transition in that.transitions) {
 					if (!that.transitions.hasOwnProperty(transition)) {
@@ -84,6 +81,7 @@ highlight = ( function () {
 				}
 
 				var new_state = active.edges['*nomatch*']
+
 				for (var edge in active.edges) {
 					if (!active.edges.hasOwnProperty(edge)) {
 						continue
@@ -96,21 +94,23 @@ highlight = ( function () {
 				that.transitions[old_state].active = false
 				that.transitions[new_state].active = true
 			
-				change_depth_state(old_state, new_state, that.depth)
+				change_delimiter_depth(old_state, new_state, that.depth)
 
 				return html_output(old_state, new_state, token)
 
 			}
 			return that
-		},
-		highlight_text: function (text) {
+		}
+
+		var highlight_text = function (text) {
 			/* given (presumably legal) R code as a single string, 
 			 return a string of higlighted R code */
 
 			var highlighted_code = ''
-			var r_state_machine = highlight.StateMachine(
-				highlight.r_transitions,
-				highlight.output_rules)
+			var r_state_machine = StateMachine(
+				r_transitions,
+				output_rules
+			)
 
 			for (var ith = 0; ith < text.length; ith++) {
 			
@@ -121,19 +121,21 @@ highlight = ( function () {
 			}
 
 			return highlighted_code
-		},
-		highlight_r_code: function () {
+		}
+		
+		var highlight_r_code = function () {
 			/* alter all class = "r" tags in a html document,
 			 returning code that can be targeted with css. */
 
 			$('.r').replaceWith( function (index, content) {
 				return '<code class = "r">' + 
-					highlight.highlight_text($(this).text()) + 
+					highlight_text($(this).text()) + 
 				'</code>'
 			} )
 
-		},
-		r_transitions: ( function () {
+		}
+
+		var r_transitions = ( function () {
 			/* returns an object which contains objects - one for each possible state -
 			 which contain an active field (is this the state we're currently on?) and 
 			 edges: tokens that trigger a state change. */
@@ -203,8 +205,10 @@ highlight = ( function () {
 					}
 				}
 			}
-		} )(),
-		output_rules: function(depth) {
+		} )()
+
+
+		var output_rules = function(depth) {
 			/* generates an object describing state-state transitions for 
 			 the R grammar highlighter each edge is associated with some html output.
 			 The output is dependent on depth,
@@ -306,7 +310,14 @@ highlight = ( function () {
 				}
 			}
 		}
-	}
+
+
+		return {
+			StateMachine: StateMachine,
+			highlight_text: highlight_text,
+			highlight_r_code: highlight_r_code
+		}
+
 } )()
 
 
