@@ -139,30 +139,40 @@ highlight = ( function () {
 		var r_transitions = ( function () {
 			/* returns an object which contains objects - one for each possible state -
 			 which contain an active field (is this the state we're currently on?) and 
-			 edges: tokens that trigger a state change. */
+			 edges: tokens that trigger a state change. 
+	
+			 {
+				'state name' (1): {
+					active (2) : true or false,
+					edges (3): {
+						"pattern" (4): 'state name',
+						"*nomatch*" (5): 'state name'
+					}
+				},
+				...
+			 }
+			  1: 'state'. an arbitrary string, one of several states a machine may occupy.
+			      key is bound to an object described below.
+			  
+			  2: active. a boolean value, denoting whether the 
+			      enclosing state is currently active.
+			  
+			  3: edges. an object containing pattern: newstate pairs. These pairs are
+			      edges between state nodes on a graph, that are followed if the
+			      pattern is matched exactly.
+			  
+			  4: "pattern". an arbitrary string. If an incoming token matches pattern
+			      then the edge is followed.
+			  
+			  5: "*nomatch*": a special pattern inside each edges object; if no 
+			      pattern matches the token, use the state name bound to this object.
 
-			var normal_and_delim_edges = ( function () {
-				/* characters that trigger a state transition - and the states they cause
-				 the move to - that are used by the normal state and the delimiter states. */
-
-				return {
-					"'": 'str_single',
-					'"': 'str_double',
-					'#': 'comment',
-					
-					'(': 'open_delim',
-					'[': 'open_delim',
-					'{': 'open_delim',
-					
-					'}': 'close_delim',
-					']': 'close_delim',
-					')': 'close_delim',
-					
-					'*nomatch*': 'normal'
-				}
-			} )()
+			 */
 
 			return {
+				// singly-quoted string. 
+				// can transition to normal state, or itself.
+
 				'str_single': {
 					'active': false,
 					'edges': {
@@ -170,6 +180,9 @@ highlight = ( function () {
 						'*nomatch*': 'str_single'
 					}
 				},
+				// doubly-quoted string. 
+				// can transition to normal state, or itself.
+
 				'str_double': {
 					'active': false,
 					'edges': {
@@ -177,32 +190,79 @@ highlight = ( function () {
 						'*nomatch*': 'str_double'
 					} 
 				},
+				// normal
+				// the starting state. transitions upon encountering 
+				// delimiters, strings or comments
+
 				'normal': {
 					'active': true,
-					'edges': normal_and_delim_edges
+					'edges': {
+						"'": 'str_single',
+						'"': 'str_double',
+						'#': 'comment',
+						
+						'(': 'open_delim',
+						'[': 'open_delim',
+						'{': 'open_delim',
+						
+						'}': 'close_delim',
+						']': 'close_delim',
+						')': 'close_delim',
+						
+						'*nomatch*': 'normal'
+					}
 				},
-				
+				// open delimiter
+				// transitions upon encountering 
+				// delimiters, strings or comments
+
 				'open_delim': {
 					'active': false,
-					'edges': normal_and_delim_edges
+					'edges': {
+						"'": 'str_single',
+						'"': 'str_double',
+						'#': 'comment',
+						
+						'(': 'open_delim',
+						'[': 'open_delim',
+						'{': 'open_delim',
+						
+						'}': 'close_delim',
+						']': 'close_delim',
+						')': 'close_delim',
+						
+						'*nomatch*': 'normal'
+					}
 				},
+				// close delimiter
+				// transitions upon encountering 
+				// delimiters, strings or comments
+
 				'close_delim': {
 					'active': false,
-					'edges': normal_and_delim_edges
+					'edges': {
+						"'": 'str_single',
+						'"': 'str_double',
+						'#': 'comment',
+						
+						'(': 'open_delim',
+						'[': 'open_delim',
+						'{': 'open_delim',
+						
+						'}': 'close_delim',
+						']': 'close_delim',
+						')': 'close_delim',
+						
+						'*nomatch*': 'normal'
+					}
 				},
+				// comment
+				// comment state reverts to normal on newline.
 				'comment': {
 					'active': false,
 					'edges': {
 						'\n': 'normal',
-						"'": 'roxygen',
 						'*nomatch*': 'comment'
-					}
-				},
-				'roxygen': {
-					'active': false,
-					'edges': {
-						'\n': 'normal',
-						'*nomatch*': 'roxygen'
 					}
 				}
 			}
@@ -296,17 +356,6 @@ highlight = ( function () {
 					},
 					'comment': {
 						'*nomatch*': '*token*'
-					},
-					'roxygen': {
-						"'": "'" + span_close() + span_open('roxygen')
-					}
-				},
-				'roxygen': {
-					'normal': {
-						'\n': '\n' + span_close()
-					},
-					'roxygen': {
-						'@': span_open('at', '@')
 					}
 				}
 			}

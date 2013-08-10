@@ -4,8 +4,8 @@
 		<script type="application/javascript;version=1.7"></script>
 
 		<link href='http://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
-		<link href="css/code-dark.css" rel='stylesheet' type="text/css"> 
-		<link href="css/styleless.css" rel="stylesheet" type="text/css" > 
+		<link href="css/tomorrow/tomorrow-dark.css" rel='stylesheet' type="text/css"> 
+		<link href="css/page.css" rel="stylesheet" type="text/css" > 
 
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 		<script src="js/highlight.js" type="text/javascript"></script>
@@ -16,6 +16,221 @@
 	<p>this is a simple test page, featuring an old-version of code from my library (plug) mchof.</p>
 
 <pre><code class = "r">
+#'
+#' Fold a function over a collection from left to right, with an initial value.
+#'
+#' @param f a binary function that returns a value that \code{f} can later take as its right argument,
+#' or a string or symbol naming such a function.
+#' @param x an arbitrary value.
+#' @param xs a list, pairlist or vector of any length.
+#'
+#' @return an arbitrary value, depending on the function \code{f}.
+#'
+#' @section Corner Cases:
+#'     returns \code{x} if \code{xs} is length-zero.
+#'
+#' @family arrow-folds
+#' @export
+
+#| function: xFoldl version: 0.1 finished: false 
+
+"this is 'a nested string' yus"
+
+xFoldl <- function (f, x, xs) {
+	.fundef <- xAutoPartial(function (f, x, xs) {
+		"(a -> b -> a) -> a -> [b] -> a
+		fold a list, starting from the left"
+		
+		pcall <- sys.call()	
+		require_a("functionable", f, pcall)
+		require_a('any', x, pcall)
+		require_a("listy", xs, pcall)
+
+		f <- match.fun(f)
+		require_a('binary function', f, pcall)
+
+		if (length(xs) == 0) {
+			x
+		} else {
+			ind <- 1
+			len_xs <- length(xs)
+
+		    while (ind <= len_xs) {
+		    	x <- f( x, xs[[ind]] )
+		    	ind <- ind + 1
+		    }
+		    x
+		}
+	})
+	
+	.args <- xArguments(FALSE)
+	xApply(.fundef, .args)	
+}
+
+#'
+#' Fold a function over a collection from right to length, with an initial value.
+#'
+#' @param f a binary function that returns a value that \code{f} can later take as its right argument,
+#' or a string or symbol naming such a function.
+#' @param x an arbitrary value.
+#' @param xs a list, pairlist or vector of any length.
+#'
+#' @return an arbitrary value, depending on the function \code{f}.
+#'
+#' @section Corner Cases:
+#'     returns \code{x} if \code{xs} is length-zero.
+#'
+#' @family arrow-folds
+#' @export
+
+#| function: xFoldr version: 0.1 finished: false 
+
+xFoldr <- function (f, x, xs) {
+	.fundef <- xAutoPartial(function (f, x, xs) {
+		"(a -> b -> b) -> b -> [a] -> b
+		fold a list, starting from the right"
+		
+		pcall <- sys.call()
+		require_a("functionable", f, pcall)
+		require_a('any', x, pcall)
+		require_a("listy", xs, pcall)
+
+		f <- match.fun(f)
+		require_a('binary function', f, pcall)
+
+		if (length(xs) == 0) {
+			x
+		} else {
+			ind <- length(xs)
+
+		    while (ind > 0) {
+		    	x <- f( xs[[ind]], x )
+		    	ind <- ind - 1
+		    }
+		    x
+		}
+	})
+	
+	.args <- xArguments(FALSE)
+	xApply(.fundef, .args)	
+}
+
+#' Fold a function over a collection from left to right.
+#'
+#' @param f a binary function that returns a value that \code{f} can later take as its left argument,
+#' or a string or symbol naming such a function.
+#' @param xs a list, pairlist or vector of any length.
+#'
+#' @return an arbitrary value, depending on the function \code{f}.
+#'
+#' @section Corner Cases:
+#'     returns \code{xs} if \code{xs} is length-zero or length-one.
+#'
+#' @family arrow-folds
+#' @export
+
+#| function: xReducel version: 0.1 finished: false 
+
+xReducel <- function (f, xs) {
+	.fundef <- xAutoPartial(function (f, xs) {
+		"(a -> b -> a) -> [b] -> a
+		fold a list, starting from the left"
+		
+		pcall <- sys.call()
+		require_a("functionable", f, pcall)
+		require_a("listy", xs, pcall)
+
+		f <- match.fun(f)
+		require_a('binary function', f, pcall)
+
+		if (length(xs) < 2) {
+			xs
+		} else {
+			ind <- 1
+			
+			x <- xFirst(xs)
+			xs <- xRest(xs)
+
+			len_xs <- length(xs)
+
+		    while (ind <= len_xs) {
+		    	x <- f( x, xs[[ind]] )
+		    	ind <- ind + 1
+		    }
+		    x
+		}
+	})
+	
+	.args <- xArguments(FALSE)
+	xApply(.fundef, .args)	
+}
+
+#' Fold a function over a collection from right to left.
+#'
+#' @param f a binary function that returns a value that \code{f} can later take as its right argument,
+#' or a string or symbol naming such a function.
+#' @param xs a list, pairlist or vector of any length.
+#'
+#' @return an arbitrary value, depending on the function \code{f}.
+#'
+#' @section Corner Cases:
+#'     returns \code{xs} if \code{xs} is length-zero or length-one.
+#'
+#' @family arrow-folds
+#' @export
+
+#| function: xReducer version: 0.1 finished: false 
+
+xReducer <- function (f, xs) {
+	.fundef <- xAutoPartial(function (f, xs) {
+		"(a -> b -> a) -> [b] -> a
+		fold a list, starting from the left"
+		
+		pcall <- sys.call()	
+		require_a("functionable", f, pcall)
+		require_a("listy", xs, pcall)
+
+		f <- match.fun(f)
+		
+		require_a('binary function', f, pcall)
+
+		if (length(xs) < 2) {
+			xs
+		} else {
+			ind <- length(xs) - 1
+			
+			x <- xFirst(xs)
+			xs <- xRest(xs)
+
+		    while (ind > 0) {
+		    	x <- f( xs[[ind]], x )
+		    	ind <- ind - 1
+		    }
+		    x
+		}
+	})
+	
+	.args <- xArguments(FALSE)
+	xApply(.fundef, .args)	
+}
+
+#'
+#' Fold a function over a collection from left to right with an initial value, keeping intermediate values.
+#'
+#' @param f a binary function that returns a value that \code{f} can later take as its right argument,
+#' or a string or symbol naming such a function.
+#' @param x an arbitrary value.
+#' @param xs a list, pairlist or vector of any length.
+#'
+#' @return a list.
+#'
+#' @section Corner Cases:
+#'     returns \code{list(x)} if \code{xs} is length-zero.
+#'
+#' @family arrow-folds
+#' @export
+
+#| function: xScanl version: 0.1 finished: false 
 
 xScanl <- function (f, x, xs) {
 	.fundef <- xAutoPartial(function (f, x, xs) {

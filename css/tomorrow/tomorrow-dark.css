@@ -1,0 +1,63 @@
+html * {
+  background: #1d1f21; }
+
+.r {
+  color: #969896; }
+
+.r * ::selection {
+  background: #373b41; }
+
+.r * ::-moz-selection {
+  background: #373b41; }
+
+.r .comment {
+  color: #cc6666;
+  font-style: italic; }
+
+.r .roxygen {
+  color: green; }
+
+.r .ssdouble {
+  color: #cc6666; }
+
+.r .dssingle {
+  color: #cc6666; }
+
+.r .sstring {
+  color: #b5bd68; }
+
+.r .dstring {
+  color: #b5bd68; }
+
+.r .at {
+  color: #cc6666; }
+
+.r .dollar {
+  color: #cc6666; }
+
+.r .lev0 {
+  color: #de935f; }
+
+.r .lev1 {
+  color: #f0c674; }
+
+.r .lev2 {
+  color: #81a2be; }
+
+.r .lev3 {
+  color: #8abeb7; }
+
+.r .lev4 {
+  color: #de935f; }
+
+.r .lev5 {
+  color: #81a2be; }
+
+.r .lev6 {
+  color: #cc6666; }
+
+.r .lev7 {
+  color: #b294bb; }
+
+.r .lev8 {
+  color: #edf1f6; }
