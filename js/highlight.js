@@ -57,8 +57,10 @@ highlight = ( function () {
 
 					if (delimiter_opened) {
 						depth += 1
+						if (depth > 13) depth = 0
 					} else if (delimiter_closed) {
 						depth -= 1
+						if (depth < 0) depth = 13
 					}
 
 					that.depth = depth
@@ -115,7 +117,7 @@ highlight = ( function () {
 
 			for (var ith = 0; ith < text.length; ith++) {
 			
-				var token = text.substring(ith, ith+1)
+				var token = text.substring(ith, ith + 1)
 				highlighted_code = 
 					highlighted_code + r_state_machine.consume_token(token)
 			
@@ -125,8 +127,8 @@ highlight = ( function () {
 		}
 		
 		var highlight_r_code = function () {
-			/* alter all class = "r" tags in a html document,
-			 returning code that can be targeted with css. */
+			/* run a state machine over all .r classes in 
+			   the DOM. */
 
 			$('.r').replaceWith( function (index, content) {
 				return '<code class = "r">' + 
@@ -166,6 +168,7 @@ highlight = ( function () {
 			  
 			  5: "*nomatch*": a special pattern inside each edges object; if no 
 			      pattern matches the token, use the state name bound to this object.
+			      not currently required by highlight.
 
 			 */
 
@@ -269,90 +272,107 @@ highlight = ( function () {
 		} )()
 
 
-		var html_output_rules = function(depth) {
+		var html_output_rules = function (depth) {
 			/* generates an object describing state-state transitions for 
-			 the R grammar highlighter each edge is associated with some html output.
-			 The output is dependent on depth,
-			 a global variable denoting how many depths nested the state machine
-			 parsing this grammar currently is. */
+			  the R grammar highlighter each edge is associated with some html output.
+			  The output is dependent on depth,
+			  a global variable denoting how many depths nested the state machine
+			  parsing this grammar currently is. Each input token is associated
+			  with an output html string.
 
-			var span_open = function (css_class) {
-				return '<span class="' + css_class + '">'
-			}
-			var span_close = function () {
-				return '</span>'
-			}
-			var span = function (css_class, content) {
-				return '<span class="' + css_class + '">' + content + '</span>'
-			}
+			  {
+			      'state a name' (1): {
+			          'state b name' (2): {
+			              'token' (3): 'html',
+			              '*nomatch*': '*token*' (4)
+			          },
+			          ...
+			      },
+			      ...
+			  }		 
+			  
+			  1. 'state a name'. an arbitrary string, the name of the state being transitioned from.  
+			  
+			  2. 'state b name'. an arbitrary string, the name of the state being transitioned to. 
+			  
+			  3. 'token'. a single input character to be styled with html.
 
-			var open_delim_output = function (depth) {
+			  4. '*token*'. not currently used, but will return the input token unmodified if
+			      implemented in the future.
 
-				return {
-					'(': span('lev' + depth, '('),
-					'[': span('lev' + depth, '['),
-					'{': span('lev' + depth, '{')
+
+			*/
+
+			var span = {
+				// create span tags.
+				open: function (css_class) {
+					return '<span class = "' + css_class + '">'
+				},
+				close: function () {
+					return '</span>'
+				},
+				both: function (css_class, content) {
+					return '<span class="' + css_class + '">' + content + '</span>'
 				}
 			}
 
-			var close_delim_output = function (depth) {
-
-				return {
-					')': span('lev' + depth, ')'),
-					']': span('lev' + depth, ']'),
-					'}': span('lev' + depth, '}')
-				}
-			}
-
-			var html_code_state = function (depth) {
+			var depth_dependent_html  = function (depth) {
 				/* the html output associated with certain tokens
 				 when in normal or delimiter states. */
 
 				return {
 					'str_single': {
-						"'": span_open("sstring") + "'"
+						"'": span.open("sstring") + "'"
 					},
 					'str_double': {
-						'"': span_open("dstring") + '"'
+						'"': span.open("dstring") + '"'
 					},
 					'normal': {
-						'$': span('dollar', '$'),
-						',': span('comma lev' + depth, ','),
+						'$': span.both('dollar', '$'),
+						',': span.both('comma lev' + depth, ','),
 						'*nomatch*': '*token*'
 					},
 					'comment': {
-						'#': span_open('comment') + '#'
+						'#': span.open('comment') + '#'
 					},
-					'open_delim': open_delim_output(depth),
-					'close_delim': close_delim_output(depth)
+					'open_delim': {
+						'(': span.both('lev' + depth, '('),
+						'[': span.both('lev' + depth, '['),
+						'{': span.both('lev' + depth, '{')
+					},
+					'close_delim': {
+						')': span.both('lev' + depth, ')'),
+						']': span.both('lev' + depth, ']'),
+						'}': span.both('lev' + depth, '}')
+					}
 				}
 			}
 
 			return {
 				'str_single': {
 					'str_single': {
-						'"': span("ssdouble", '"'),
+						'"': span.both("ssdouble", '"'),
 						'*nomatch*': '*token*'
 					},
 					'normal': {
-						"'": "'" + span_close() 
+						"'": "'" + span.close() 
 					}
 				},
 				'str_double': {
 					'str_double': {
-						"'": span("dssingle", "'"),
+						"'": span.both("dssingle", "'"),
 						'*nomatch*': '*token*'
 					},
 					'normal': {
-						'"': '"' + span_close()
+						'"': '"' + span.close()
 					}
 				},
-				'normal': html_code_state(depth),
-				'open_delim': html_code_state(depth),
-				'close_delim': html_code_state(depth),
+				'normal': depth_dependent_html(depth),
+				'open_delim': depth_dependent_html(depth),
+				'close_delim': depth_dependent_html(depth),
 				'comment': {
 					'normal': {
-						'\n': '\n' + span_close()
+						'\n': '\n' + span.close()
 					},
 					'comment': {
 						'*nomatch*': '*token*'
@@ -360,7 +380,6 @@ highlight = ( function () {
 				}
 			}
 		}
-
 
 		return {
 			StateMachine: StateMachine,

@@ -1,0 +1,80 @@
+html * {
+  background: white; }
+
+::selection {
+  background: #ebebeb; }
+
+::-moz-selection {
+  background: #ebebeb; }
+
+.r {
+  color: #4d4d4d; }
+
+.r .comment {
+  color: darkcyan;
+  font-style: italic;
+  background: #ecffff; }
+
+.r .roxygen {
+  color: darkcyan;
+  background: #ecffff; }
+
+.r .ssdouble {
+  color: #00228b; }
+
+.r .dssingle {
+  color: #00228b; }
+
+.r .sstring {
+  color: #008b68; }
+
+.r .dstring {
+  color: #008b68; }
+
+.r .at {
+  color: darkgreen; }
+
+.r .dollar {
+  color: darkgreen; }
+
+.r .lev0 {
+  color: #6e00d7; }
+
+.r .lev1 {
+  color: #3800d7; }
+
+.r .lev2 {
+  color: #0200d7; }
+
+.r .lev3 {
+  color: #0035d7; }
+
+.r .lev4 {
+  color: #006bd7; }
+
+.r .lev5 {
+  color: #00a1d7; }
+
+.r .lev6 {
+  color: #00d7d7; }
+
+.r .lev7 {
+  color: #00d7a1; }
+
+.r .lev8 {
+  color: #00d76b; }
+
+.r .lev9 {
+  color: #00d735; }
+
+.r .lev10 {
+  color: #02d700; }
+
+.r .lev11 {
+  color: #38d700; }
+
+.r .lev12 {
+  color: #6ed700; }
+
+.r .lev13 {
+  color: #a4d700; }
