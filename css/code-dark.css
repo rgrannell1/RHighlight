@@ -1,0 +1,48 @@
+.comment, .roxygen {
+  color: #93a1a1;
+  font-style: italic; }
+
+.ssdouble {
+  color: #b58900; }
+
+.dssingle {
+  color: #b58900; }
+
+.sstring {
+  color: #2aa198; }
+
+.dstring {
+  color: #2aa198; }
+
+.at {
+  color: #859900; }
+
+.dollar {
+  color: #002b36; }
+
+.lev0 {
+  color: #dc322f; }
+
+.lev1 {
+  color: #859900; }
+
+.lev2 {
+  color: #268bd2; }
+
+.lev3 {
+  color: #b58900; }
+
+.lev4 {
+  color: #cb4b16; }
+
+.lev5 {
+  color: #d33682; }
+
+.lev6 {
+  color: #b58900; }
+
+.lev7 {
+  color: #2aa198; }
+
+.lev8 {
+  color: #b58900; }

@@ -8,11 +8,12 @@ highlight = ( function () {
 	  released under the GLP-3, copyright Ryan Grannell. */
 
 		var StateMachine = function (states, outputs) {
+			// returns a finite-state machine. 
 
 			var that = {
 				depth: 0,
 				transitions: states,
-				output_rules: outputs( this.depth )				
+				html_output_rules: outputs( this.depth )				
 			}
 
 			that.consume_token = function (token) {
@@ -25,7 +26,7 @@ highlight = ( function () {
 					 triggered the transition. returns a html string that
 					 styles the input token. */
 
-					var state_rules = that.output_rules[source][target]
+					var state_rules = that.html_output_rules[source][target]
 					var html_string = token
 
 					for (var candidate in state_rules) {
@@ -61,11 +62,11 @@ highlight = ( function () {
 					}
 
 					that.depth = depth
-					that.output_rules = output_rules(depth)
+					that.html_output_rules = html_output_rules(depth)
 
 					return {
 						"depth": depth, 
-						"output_rules": output_rules(depth) 
+						"html_output_rules": html_output_rules(depth) 
 					}
 				}
 				
@@ -109,7 +110,7 @@ highlight = ( function () {
 			var highlighted_code = ''
 			var r_state_machine = StateMachine(
 				r_transitions,
-				output_rules
+				html_output_rules
 			)
 
 			for (var ith = 0; ith < text.length; ith++) {
@@ -208,7 +209,7 @@ highlight = ( function () {
 		} )()
 
 
-		var output_rules = function(depth) {
+		var html_output_rules = function(depth) {
 			/* generates an object describing state-state transitions for 
 			 the R grammar highlighter each edge is associated with some html output.
 			 The output is dependent on depth,
