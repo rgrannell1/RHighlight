@@ -11,4 +11,4 @@ outlining the structure and documentation of a program.
 
 ### Examples
 
-<img src = "example.png"  width ="300" height ="300">
+<img src = "example.png"  width ="400">
