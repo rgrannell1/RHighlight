@@ -1,4 +1,3 @@
-
 (function () {
 	"use strict"
 } )()
@@ -126,11 +125,11 @@ highlight = ( function () {
 			return highlighted_code
 		}
 		
-		var highlight_r_code = function () {
+		var highlight_r_code = function (selector) {
 			/* run a state machine over all .r classes in 
 			   the DOM. */
 
-			$('.r').replaceWith( function (index, content) {
+			$(selector).replaceWith( function (index, content) {
 				return '<code class = "r">' + 
 					highlight_text($(this).text()) + 
 				'</code>'
