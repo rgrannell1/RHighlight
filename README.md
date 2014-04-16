@@ -8,8 +8,6 @@ other elements are played down. The assumption is that most programmers are comp
 enought to spot numbers and boolean values, so colouring is best spent
 outlining the structure and documentation of a program.
 
-*note: I wrote RHighlight when I was inexperienced at writing Javascript.*
-
 ## 1 Requirements
 
 * jQuery.
