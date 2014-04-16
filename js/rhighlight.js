@@ -180,8 +180,8 @@ rhighlight = ( function () {
 				'str_single': {
 					'active': false,
 					'edges': {
-						"'": 'normal',
-						'*nomatch*': 'str_single'
+						"'": 		'normal',
+						'*nomatch*': 	'str_single'
 					}
 				},
 				// doubly-quoted string.
@@ -190,8 +190,8 @@ rhighlight = ( function () {
 				'str_double': {
 					'active': false,
 					'edges': {
-						'"': 'normal',
-						'*nomatch*': 'str_double'
+						'"': 		'normal',
+						'*nomatch*': 	'str_double'
 					}
 				},
 				// normal
@@ -201,19 +201,19 @@ rhighlight = ( function () {
 				'normal': {
 					'active': true,
 					'edges': {
-						"'": 'str_single',
-						'"': 'str_double',
-						'#': 'comment',
+						"'": 		'str_single',
+						'"': 		'str_double',
+						'#': 		'comment',
 
-						'(': 'open_delim',
-						'[': 'open_delim',
-						'{': 'open_delim',
+						'(': 		'open_delim',
+						'[': 		'open_delim',
+						'{': 		'open_delim',
 
-						'}': 'close_delim',
-						']': 'close_delim',
-						')': 'close_delim',
+						'}': 		'close_delim',
+						']': 		'close_delim',
+						')': 		'close_delim',
 
-						'*nomatch*': 'normal'
+						'*nomatch*': 	'normal'
 					}
 				},
 				// open delimiter
