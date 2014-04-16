@@ -318,20 +318,20 @@ rhighlight = ( function () {
 			return {
 				'str_single': {
 					'str_single': {
-						'"': 		span.both("ssdouble", '"'),
+						'"': 			span.both("ssdouble", '"'),
 						'*nomatch*': 	'*token*'
 					},
 					'normal': {
-						"'": 		"'" + span.close()
+						"'": 			"'" + span.close()
 					}
 				},
 				'str_double': {
 					'str_double': {
-						"'": 		span.both("dssingle", "'"),
+						"'": 			span.both("dssingle", "'"),
 						'*nomatch*': 	'*token*'
 					},
 					'normal': {
-						'"': '		"' + span.close()
+						'"': '			"' + span.close()
 					}
 				},
 				'normal': 				depthDependentOutput(depth),
@@ -339,10 +339,10 @@ rhighlight = ( function () {
 				'close_delim': 			depthDependentOutput(depth),
 				'comment': {
 					'normal': {
-						'\n': '\n' + span.close()
+										'\n': '\n' + span.close()
 					},
 					'comment': {
-						'*nomatch*': '*token*'
+										'*nomatch*': '*token*'
 					}
 				}
 			}
