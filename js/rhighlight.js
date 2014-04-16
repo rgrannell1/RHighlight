@@ -223,19 +223,19 @@ rhighlight = ( function () {
 				'open_delim': {
 					'active': false,
 					'edges': {
-						"'": 'str_single',
-						'"': 'str_double',
-						'#': 'comment',
+						"'": 		'str_single',
+						'"': 		'str_double',
+						'#': 		'comment',
 
-						'(': 'open_delim',
-						'[': 'open_delim',
-						'{': 'open_delim',
+						'(': 		'open_delim',
+						'[': 		'open_delim',
+						'{': 		'open_delim',
 
-						'}': 'close_delim',
-						']': 'close_delim',
-						')': 'close_delim',
+						'}': 		'close_delim',
+						']': 		'close_delim',
+						')': 		'close_delim',
 
-						'*nomatch*': 'normal'
+						'*nomatch*': 	'normal'
 					}
 				},
 				// close delimiter
@@ -245,19 +245,19 @@ rhighlight = ( function () {
 				'close_delim': {
 					'active': false,
 					'edges': {
-						"'": 'str_single',
-						'"': 'str_double',
-						'#': 'comment',
+						"'": 		'str_single',
+						'"': 		'str_double',
+						'#': 		'comment',
 
-						'(': 'open_delim',
-						'[': 'open_delim',
-						'{': 'open_delim',
+						'(': 		'open_delim',
+						'[': 		'open_delim',
+						'{': 		'open_delim',
 
-						'}': 'close_delim',
-						']': 'close_delim',
-						')': 'close_delim',
+						'}': 		'close_delim',
+						']': 		'close_delim',
+						')': 		'close_delim',
 
-						'*nomatch*': 'normal'
+						'*nomatch*': 	'normal'
 					}
 				},
 				// comment
@@ -265,8 +265,8 @@ rhighlight = ( function () {
 				'comment': {
 					'active': false,
 					'edges': {
-						'\n': 'normal',
-						'*nomatch*': 'comment'
+						'\n': 		'normal',
+						'*nomatch*': 	'comment'
 					}
 				}
 			}
