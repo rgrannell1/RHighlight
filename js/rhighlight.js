@@ -323,28 +323,28 @@ rhighlight = ( function () {
 
 				return {
 					'str_single': {
-						"'": span.open("sstring") + "'"
+						"'": 		span.open("sstring") + "'"
 					},
 					'str_double': {
-						'"': span.open("dstring") + '"'
+						'"': 		span.open("dstring") + '"'
 					},
 					'normal': {
-						'$': span.both('dollar', '$'),
-						',': span.both('comma lev' + depth, ','),
-						'*nomatch*': '*token*'
+						'$': 		span.both('dollar', '$'),
+						',': 		span.both('comma lev' + depth, ','),
+						'*nomatch*': 	'*token*'
 					},
 					'comment': {
-						'#': span.open('comment') + '#'
+						'#': 		span.open('comment') + '#'
 					},
 					'open_delim': {
-						'(': span.both('lev' + depth, '('),
-						'[': span.both('lev' + depth, '['),
-						'{': span.both('lev' + depth, '{')
+						'(': 		span.both('lev' + depth, '('),
+						'[': 		span.both('lev' + depth, '['),
+						'{': 		span.both('lev' + depth, '{')
 					},
 					'close_delim': {
-						')': span.both('lev' + depth, ')'),
-						']': span.both('lev' + depth, ']'),
-						'}': span.both('lev' + depth, '}')
+						')': 		span.both('lev' + depth, ')'),
+						']': 		span.both('lev' + depth, ']'),
+						'}': 		span.both('lev' + depth, '}')
 					}
 				}
 			}
@@ -352,25 +352,25 @@ rhighlight = ( function () {
 			return {
 				'str_single': {
 					'str_single': {
-						'"': span.both("ssdouble", '"'),
-						'*nomatch*': '*token*'
+						'"': 		span.both("ssdouble", '"'),
+						'*nomatch*': 	'*token*'
 					},
 					'normal': {
-						"'": "'" + span.close()
+						"'": 		"'" + span.close()
 					}
 				},
 				'str_double': {
 					'str_double': {
-						"'": span.both("dssingle", "'"),
-						'*nomatch*': '*token*'
+						"'": 		span.both("dssingle", "'"),
+						'*nomatch*': 	'*token*'
 					},
 					'normal': {
-						'"': '"' + span.close()
+						'"': '		"' + span.close()
 					}
 				},
-				'normal': depth_dependent_html(depth),
-				'open_delim': depth_dependent_html(depth),
-				'close_delim': depth_dependent_html(depth),
+				'normal': 	depth_dependent_html(depth),
+				'open_delim': 	depth_dependent_html(depth),
+				'close_delim': 	depth_dependent_html(depth),
 				'comment': {
 					'normal': {
 						'\n': '\n' + span.close()
