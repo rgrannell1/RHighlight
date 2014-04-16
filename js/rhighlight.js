@@ -15,50 +15,50 @@ rhighlight = ( function () {
 				htmlOutputRules: outputs( this.depth )
 			}
 
-			self.consume_token = function (token) {
+			self.consumeToken = function (token) {
 				/* takes a single token, updates internal state if
 				 the token caused a state -> state transition. returns a
 				 pretty html string to the user. */
 
-				var html_output = function (source, target, token) {
+				var htmlOutput = function (source, target, token) {
 					/* takes a source state, target state and a token that
 					 triggered the transition. returns a html string that
 					 styles the input token. */
 
-					var state_rules = self.htmlOutputRules[source][target]
-					var html_string = token
+					var stateRules = self.htmlOutputRules[source][target]
+					var htmlString = token
 
-					for (var candidate in state_rules) {
-						if (!state_rules.hasOwnProperty(candidate)) {
+					for (var candidate in stateRules) {
+						if (!stateRules.hasOwnProperty(candidate)) {
 							continue
 						}
 						if (candidate !== '*nomatch*' && candidate === token) {
-							html_string = state_rules[candidate]
+							htmlString = stateRules[candidate]
 						}
 					}
 
-					return html_string
+					return htmlString
 				}
 
-				var change_delimiter_depth = function (source, target, depth) {
+				var changeDelimiterDepth = function (source, target, depth) {
 					// change r output depth based on transition
 
-					var delimiter_opened =
+					var delimiterOpened =
 						(source === 'normal' &&
 							target === 'open_delim') ||
 						(source === 'open_delim' &&
 							target === 'open_delim')
 
-					var delimiter_closed =
+					var delimitedClosed =
 						(source === 'close_delim' &&
 							target === 'normal') ||
 						(source === 'close_delim' &&
 							target === 'close_delim')
 
-					if (delimiter_opened) {
+					if (delimiterOpened) {
 						depth += 1
 						if (depth > 13) depth = 0
-					} else if (delimiter_closed) {
+					} else if (delimitedClosed) {
 						depth -= 1
 						if (depth < 0) depth = 13
 					}
@@ -79,33 +79,33 @@ rhighlight = ( function () {
 
 					if (self.transitions[transition].active) {
 						var active = self.transitions[transition]
-						var old_state = transition
+						var oldState = transition
 					}
 				}
 
-				var new_state = active.edges['*nomatch*']
+				var newState = active.edges['*nomatch*']
 
 				for (var edge in active.edges) {
 					if (!active.edges.hasOwnProperty(edge)) {
 						continue
 					}
 					if (token === edge) {
-						new_state = active.edges[edge]
+						newState = active.edges[edge]
 					}
 				}
 
-				self.transitions[old_state].active = false
-				self.transitions[new_state].active = true
+				self.transitions[oldState].active = false
+				self.transitions[newState].active = true
 
-				change_delimiter_depth(old_state, new_state, self.depth)
+				changeDelimiterDepth(oldState, newState, self.depth)
 
-				return html_output(old_state, new_state, token)
+				return htmlOutput(oldState, newState, token)
 
 			}
-			return that
+			return self
 		}
 
-		var r_transitions = ( function () {
+		var rTransitions = ( function () {
 			/* returns an object which contains objects - one for each possible state -
 			 which contain an active field (is this the state we're currently on?) and
 			 edges: tokens that trigger a state change.
@@ -272,18 +272,18 @@ rhighlight = ( function () {
 
 			var span = {
 				// create span tags.
-				open: function (css_class) {
-					return '<span class = "' + css_class + '">'
+				open: function (htmlClass) {
+					return '<span class = "' + htmlClass + '">'
 				},
 				close: function () {
 					return '</span>'
 				},
-				both: function (css_class, content) {
-					return '<span class="' + css_class + '">' + content + '</span>'
+				both: function (htmlClass, content) {
+					return '<span class="' + htmlClass + '">' + content + '</span>'
 				}
 			}
 
-			var depth_dependent_html = function (depth) {
+			var depthDependentOutput = function (depth) {
 				/* the html output associated with certain tokens
 				 when in normal or delimiter states. */
 
@@ -334,9 +334,9 @@ rhighlight = ( function () {
 						'"': '		"' + span.close()
 					}
 				},
-				'normal': 			depth_dependent_html(depth),
-				'open_delim': 			depth_dependent_html(depth),
-				'close_delim': 			depth_dependent_html(depth),
+				'normal': 				depthDependentOutput(depth),
+				'open_delim': 			depthDependentOutput(depth),
+				'close_delim': 			depthDependentOutput(depth),
 				'comment': {
 					'normal': {
 						'\n': '\n' + span.close()
@@ -349,41 +349,38 @@ rhighlight = ( function () {
 		}
 
 
-		var highlight_text = function (text) {
+		var highlightText = function (text) {
 			/* given (presumably legal) R code as a single string,
 			 return a string of higlighted R code */
 
-			var highlighted_code = ''
-			var r_state_machine = StateMachine(
-				r_transitions,
-				htmlOutputRules
-			)
+			var highlightedCode = ''
+			var rStateMachine = StateMachine(rTransitions, htmlOutputRules)
 
 			for (var ith = 0; ith < text.length; ith++) {
 
 				var token = text.substring(ith, ith + 1)
-				highlighted_code =
-					highlighted_code + r_state_machine.consume_token(token)
+				highlightedCode =
+					highlightedCode + rStateMachine.consumeToken(token)
 
 			}
 
-			return highlighted_code
+			return highlightedCode
 		}
 
-		var highlight_r_code = function (selector, tag) {
+		var highlightSelector = function (selector, tag) {
 			/* run a state machine over all .r classes in
 			   the DOM. */
 
 			$(selector).replaceWith( function (index, content) {
-				return tag( highlight_text($(this).text()) )
+				return tag( highlightText($(this).text()) )
 			} )
 
 		}
 
 		return {
-			StateMachine:     StateMachine,
-			highlight_text:   highlight_text,
-			highlight_r_code: highlight_r_code
+			StateMachine: 		StateMachine,
+			highlightText: 		highlightText,
+			highlightSelector: 	highlightSelector
 		}
 
 } )()
