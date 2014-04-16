@@ -92,12 +92,13 @@ selector.
 You can use a selector of your choice, but a simple method is to use a class select
 like ".myRCodeClass". The callback function takes the highlighted code as a string,
 and lets you wrap the code in html of your choice.  You will probably want to use the
-.
+same tag your R code was initially wrapped in.
 
+```html
 <script type="text/javascript">
 
 rhighlight.highlight_r_code(".myRCodeClass", function (text) {
-	return "<pre>" + text + "<pre>"
+	return "<pre class = 'myRCodeClass'>" + text + "<pre>"
 })
 
 </script>
