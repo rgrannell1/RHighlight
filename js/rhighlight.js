@@ -1,5 +1,5 @@
 
-(function () {
+;( function () {
 	"use strict"
 } )()
 
@@ -8,15 +8,15 @@ highlight = ( function () {
 	  released under the GLP-3, copyright Ryan Grannell. */
 
 		var StateMachine = function (states, outputs) {
-			// returns a finite-state machine. 
+			// returns a finite-state machine.
 
-			var that = {
+			var self = {
 				depth: 0,
 				transitions: states,
-				html_output_rules: outputs( this.depth )				
+				htmlOutputRules: outputs( this.depth )
 			}
 
-			that.consume_token = function (token) {
+			self.consume_token = function (token) {
 				/* takes a single token, updates internal state if
 				 the token caused a state -> state transition. returns a
 				 pretty html string to the user. */
@@ -26,7 +26,7 @@ highlight = ( function () {
 					 triggered the transition. returns a html string that
 					 styles the input token. */
 
-					var state_rules = that.html_output_rules[source][target]
+					var state_rules = self.htmlOutputRules[source][target]
 					var html_string = token
 
 					for (var candidate in state_rules) {
@@ -35,21 +35,22 @@ highlight = ( function () {
 						}
 						if (candidate !== '*nomatch*' && candidate === token) {
 							html_string = state_rules[candidate]
-						}			
-					}	
+						}
+					}
+
 					return html_string
 				}
 
 				var change_delimiter_depth = function (source, target, depth) {
 					// change r output depth based on transition
 
-					var delimiter_opened = 
-						(source === 'normal' && 
-							target === 'open_delim') || 
+					var delimiter_opened =
+						(source === 'normal' &&
+							target === 'open_delim') ||
 						(source === 'open_delim' &&
 							target === 'open_delim')
-					
-					var delimiter_closed = 
+
+					var delimiter_closed =
 						(source === 'close_delim' &&
 							target === 'normal') ||
 						(source === 'close_delim' &&
@@ -63,22 +64,22 @@ highlight = ( function () {
 						if (depth < 0) depth = 13
 					}
 
-					that.depth = depth
-					that.html_output_rules = html_output_rules(depth)
+					self.depth = depth
+					self.htmlOutputRules = htmlOutputRules(depth)
 
 					return {
-						"depth": depth, 
-						"html_output_rules": html_output_rules(depth) 
+						"depth": depth,
+						"htmlOutputRules": htmlOutputRules(depth)
 					}
 				}
-				
-				for (var transition in that.transitions) {
-					if (!that.transitions.hasOwnProperty(transition)) {
+
+				for (var transition in self.transitions) {
+					if (!self.transitions.hasOwnProperty(transition)) {
 						continue
 					}
 
-					if (that.transitions[transition].active) {
-						var active = that.transitions[transition]
+					if (self.transitions[transition].active) {
+						var active = self.transitions[transition]
 						var old_state = transition
 					}
 				}
@@ -88,61 +89,29 @@ highlight = ( function () {
 				for (var edge in active.edges) {
 					if (!active.edges.hasOwnProperty(edge)) {
 						continue
-					}					
+					}
 					if (token === edge) {
 						new_state = active.edges[edge]
 					}
 				}
 
-				that.transitions[old_state].active = false
-				that.transitions[new_state].active = true
-			
-				change_delimiter_depth(old_state, new_state, that.depth)
+				self.transitions[old_state].active = false
+				self.transitions[new_state].active = true
+
+				change_delimiter_depth(old_state, new_state, self.depth)
 
 				return html_output(old_state, new_state, token)
 
 			}
-			return that
-		}
 
-		var highlight_text = function (text) {
-			/* given (presumably legal) R code as a single string, 
-			 return a string of higlighted R code */
-
-			var highlighted_code = ''
-			var r_state_machine = StateMachine(
-				r_transitions,
-				html_output_rules
-			)
-
-			for (var ith = 0; ith < text.length; ith++) {
-			
-				var token = text.substring(ith, ith + 1)
-				highlighted_code = 
-					highlighted_code + r_state_machine.consume_token(token)
-			
-			}
-
-			return highlighted_code
-		}
-		
-		var highlight_r_code = function () {
-			/* run a state machine over all .r classes in 
-			   the DOM. */
-
-			$('.r').replaceWith( function (index, content) {
-				return '<code class = "r">' + 
-					highlight_text($(this).text()) + 
-				'</code>'
-			} )
-
+			return self
 		}
 
 		var r_transitions = ( function () {
 			/* returns an object which contains objects - one for each possible state -
-			 which contain an active field (is this the state we're currently on?) and 
-			 edges: tokens that trigger a state change. 
-	
+			 which contain an active field (is this the state we're currently on?) and
+			 edges: tokens that trigger a state change.
+
 			 {
 				'state name' (1): {
 					active (2) : true or false,
@@ -155,25 +124,25 @@ highlight = ( function () {
 			 }
 			  1: 'state'. an arbitrary string, one of several states a machine may occupy.
 			      key is bound to an object described below.
-			  
-			  2: active. a boolean value, denoting whether the 
+
+			  2: active. a boolean value, denoting whether the
 			      enclosing state is currently active.
-			  
+
 			  3: edges. an object containing pattern: newstate pairs. These pairs are
 			      edges between state nodes on a graph, that are followed if the
 			      pattern is matched exactly.
-			  
+
 			  4: "pattern". an arbitrary string. If an incoming token matches pattern
 			      then the edge is followed.
-			  
-			  5: "*nomatch*": a special pattern inside each edges object; if no 
+
+			  5: "*nomatch*": a special pattern inside each edges object; if no
 			      pattern matches the token, use the state name bound to this object.
 			      not currently required by highlight.
 
 			 */
 
 			return {
-				// singly-quoted string. 
+				// singly-quoted string.
 				// can transition to normal state, or itself.
 
 				'str_single': {
@@ -183,7 +152,7 @@ highlight = ( function () {
 						'*nomatch*': 'str_single'
 					}
 				},
-				// doubly-quoted string. 
+				// doubly-quoted string.
 				// can transition to normal state, or itself.
 
 				'str_double': {
@@ -191,10 +160,10 @@ highlight = ( function () {
 					'edges': {
 						'"': 'normal',
 						'*nomatch*': 'str_double'
-					} 
+					}
 				},
 				// normal
-				// the starting state. transitions upon encountering 
+				// the starting state. transitions upon encountering
 				// delimiters, strings or comments
 
 				'normal': {
@@ -203,20 +172,20 @@ highlight = ( function () {
 						"'": 'str_single',
 						'"': 'str_double',
 						'#': 'comment',
-						
+
 						'(': 'open_delim',
 						'[': 'open_delim',
 						'{': 'open_delim',
-						
+
 						'}': 'close_delim',
 						']': 'close_delim',
 						')': 'close_delim',
-						
+
 						'*nomatch*': 'normal'
 					}
 				},
 				// open delimiter
-				// transitions upon encountering 
+				// transitions upon encountering
 				// delimiters, strings or comments
 
 				'open_delim': {
@@ -225,20 +194,20 @@ highlight = ( function () {
 						"'": 'str_single',
 						'"': 'str_double',
 						'#': 'comment',
-						
+
 						'(': 'open_delim',
 						'[': 'open_delim',
 						'{': 'open_delim',
-						
+
 						'}': 'close_delim',
 						']': 'close_delim',
 						')': 'close_delim',
-						
+
 						'*nomatch*': 'normal'
 					}
 				},
 				// close delimiter
-				// transitions upon encountering 
+				// transitions upon encountering
 				// delimiters, strings or comments
 
 				'close_delim': {
@@ -247,15 +216,15 @@ highlight = ( function () {
 						"'": 'str_single',
 						'"': 'str_double',
 						'#': 'comment',
-						
+
 						'(': 'open_delim',
 						'[': 'open_delim',
 						'{': 'open_delim',
-						
+
 						'}': 'close_delim',
 						']': 'close_delim',
 						')': 'close_delim',
-						
+
 						'*nomatch*': 'normal'
 					}
 				},
@@ -272,8 +241,8 @@ highlight = ( function () {
 		} )()
 
 
-		var html_output_rules = function (depth) {
-			/* generates an object describing state-state transitions for 
+		var htmlOutputRules = function (depth) {
+			/* generates an object describing state-state transitions for
 			  the R grammar highlighter each edge is associated with some html output.
 			  The output is dependent on depth,
 			  a global variable denoting how many depths nested the state machine
@@ -289,12 +258,12 @@ highlight = ( function () {
 			          ...
 			      },
 			      ...
-			  }		 
-			  
-			  1. 'state a name'. an arbitrary string, the name of the state being transitioned from.  
-			  
-			  2. 'state b name'. an arbitrary string, the name of the state being transitioned to. 
-			  
+			  }
+
+			  1. 'state a name'. an arbitrary string, the name of the state being transitioned from.
+
+			  2. 'state b name'. an arbitrary string, the name of the state being transitioned to.
+
 			  3. 'token'. a single input character to be styled with html.
 
 			  4. '*token*'. not currently used, but will return the input token unmodified if
@@ -316,7 +285,7 @@ highlight = ( function () {
 				}
 			}
 
-			var depth_dependent_html  = function (depth) {
+			var depth_dependent_html = function (depth) {
 				/* the html output associated with certain tokens
 				 when in normal or delimiter states. */
 
@@ -355,7 +324,7 @@ highlight = ( function () {
 						'*nomatch*': '*token*'
 					},
 					'normal': {
-						"'": "'" + span.close() 
+						"'": "'" + span.close()
 					}
 				},
 				'str_double': {
@@ -381,13 +350,42 @@ highlight = ( function () {
 			}
 		}
 
+
+		var highlight_text = function (text) {
+			/* given (presumably legal) R code as a single string,
+			 return a string of higlighted R code */
+
+			var highlighted_code = ''
+			var r_state_machine = StateMachine(
+				r_transitions,
+				htmlOutputRules
+			)
+
+			for (var ith = 0; ith < text.length; ith++) {
+
+				var token = text.substring(ith, ith + 1)
+				highlighted_code =
+					highlighted_code + r_state_machine.consume_token(token)
+
+			}
+
+			return highlighted_code
+		}
+
+		var highlight_r_code = function (selector, tag) {
+			/* run a state machine over all .r classes in
+			   the DOM. */
+
+			$(selector).replaceWith( function (index, content) {
+				return tag( highlight_text($(this).text()) )
+			} )
+
+		}
+
 		return {
-			StateMachine: StateMachine,
-			highlight_text: highlight_text,
+			StateMachine:     StateMachine,
+			highlight_text:   highlight_text,
 			highlight_r_code: highlight_r_code
 		}
 
 } )()
-
-
-

@@ -4,273 +4,117 @@
 		<script type="application/javascript;version=1.7"></script>
 
 		<link href='http://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
-		<link href="css/mint/mint-light.css" rel='stylesheet' type="text/css"> 
-		<link href="css/page.css" rel="stylesheet" type="text/css" > 
+		<link href="css/mint/mint-light.css" rel='stylesheet' type="text/css">
+		<link href="css/page.css" rel="stylesheet" type="text/css" >
 
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 		<script src="js/highlight.js" type="text/javascript"></script>
 
 	</head>
-	<body>
+	<body onload="highlight.highlight_r_code()">
 
 	<p>this is a simple test page, featuring an old-version of code from my library (plug) mchof.</p>
 
-<pre><code class = "r">
+<pre class = "input">
 
-#'
-#' Fold a function over a collection from left to right, with an initial value.
-#'
-#' @param f a binary function that returns a value that \code{f} can later take as its right argument,
-#' or a string or symbol naming such a function.
-#' @param x an arbitrary value.
-#' @param xs a list, pairlist or vector of any length.
-#'
-#' @return an arbitrary value, depending on the function \code{f}.
-#'
-#' @section Corner Cases:
-#'     returns \code{x} if \code{xs} is length-zero.
-#'
-#' @family arrow-folds
-#' @export
 
-#| function: xFoldl version: 0.1 finished: false 
+#
+# a subset of the 1999 Clinton impeachment vote.
+# each row of the data represents a candidate;
+# the columns the party, perjury vote and obstruction vote respectively.
 
-xFoldl <- function (f, x, xs) {
-	.fundef <- xAutoPartial(function (f, x, xs) {
-		"(a -> b -> a) -> a -> [b] -> a
-		fold a list, starting from the left"
-		
-		pcall <- sys.call()	
-		require_a("functionable", f, pcall)
-		require_a('any', x, pcall)
-		require_a("listy", xs, pcall)
+raw_clinton_vote <- "
+	R	Guilty		Guilty
+	D	NotGuilty	NotGuilty
+	R	Guilty		Guilty
+	R	Guilty		Guilty
+	D	NotGuilty	NotGuilty
+	D	NotGuilty	NotGuilty
+	R	Guilty		Guilty
+	D	NotGuilty	NotGuilty
+	D	NotGuilty	NotGuilty
+	R	Guilty		Guilty
+	D	NotGuilty	NotGuilty
+	D	NotGuilty	NotGuilty
+	R	Guilty		Guilty
+	D	NotGuilty	NotGuilty
+	R	Guilty		Guilty
+	R	Guilty		Guilty
+	D	NotGuilty	NotGuilty
+	R	Guilty		Guilty
+	R	NotGuilty	NotGuilty
+	D	NotGuilty	NotGuilty
+	R	Guilty		Guilty
+	R	NotGuilty	NotGuilty
+	D	NotGuilty	NotGuilty
+	R	Guilty		Guilty
+	R	Guilty		Guilty
+	D	NotGuilty	NotGuilty"
 
-		f <- match.fun(f)
-		require_a('binary function', f, pcall)
+clinton_vote <-
+	x_(raw_clinton_vote) $ xToLines() $ xMap(xToWords) $
+	xZip() $ xAddKeys(c('party', 'perjury', 'obstruction'))
 
-		if (length(xs) == 0) {
-			x
-		} else {
-			ind <- 1
-			len_xs <- length(xs)
+# 1.
+# Tabulate the overall results for the perjury vote
 
-		    while (ind <= len_xs) {
-		    	x <- f( x, xs[[ind]] )
-		    	ind <- ind + 1
-		    }
-		    x
-		}
-	})
-	
-	.args <- xArguments(FALSE)
-	xApply(.fundef, .args)	
-}
+clinton_vote $ xAtKey('perjury') $ x_Tabulate()
 
-#'
-#' Fold a function over a collection from right to length, with an initial value.
-#'
-#' @param f a binary function that returns a value that \code{f} can later take as its right argument,
-#' or a string or symbol naming such a function.
-#' @param x an arbitrary value.
-#' @param xs a list, pairlist or vector of any length.
-#'
-#' @return an arbitrary value, depending on the function \code{f}.
-#'
-#' @section Corner Cases:
-#'     returns \code{x} if \code{xs} is length-zero.
-#'
-#' @family arrow-folds
-#' @export
+# list( list("Guilty", 12), list("NotGuilty", 14) )
 
-#| function: xFoldr version: 0.1 finished: false 
+# 2.
+# Tabulate the overall results for the obstruction vote
 
-xFoldr <- function (f, x, xs) {
-	.fundef <- xAutoPartial(function (f, x, xs) {
-		"(a -> b -> b) -> b -> [a] -> b
-		fold a list, starting from the right"
-		
-		pcall <- sys.call()
-		require_a("functionable", f, pcall)
-		require_a('any', x, pcall)
-		require_a("listy", xs, pcall)
+clinton_vote $ xAtKey('obstruction') $ x_Tabulate()
 
-		f <- match.fun(f)
-		require_a('binary function', f, pcall)
+# list( list("Guilty", 12), list("NotGuilty", 14) )
 
-		if (length(xs) == 0) {
-			x
-		} else {
-			ind <- length(xs)
+# 3.
+# An advanced example;
+# get the overall vote within each party.
 
-		    while (ind > 0) {
-		    	x <- f( xs[[ind]], x )
-		    	ind <- ind - 1
-		    }
-		    x
-		}
-	})
-	
-	.args <- xArguments(FALSE)
-	xApply(.fundef, .args)	
-}
+clinton_vote $ xZip () $ xGroupBy(xFirstOf) $ # -- group by party
+xAtCol(2) $ # -- select the groups
+xMap(party := {
+	# get the perjury and obstruction votes by party.
 
-#' Fold a function over a collection from left to right.
-#'
-#' @param f a binary function that returns a value that \code{f} can later take as its left argument,
-#' or a string or symbol naming such a function.
-#' @param xs a list, pairlist or vector of any length.
-#'
-#' @return an arbitrary value, depending on the function \code{f}.
-#'
-#' @section Corner Cases:
-#'     returns \code{xs} if \code{xs} is length-zero or length-one.
-#'
-#' @family arrow-folds
-#' @export
+	list(
+		perjury =
+			x_(party) $ xAtCol(2) $ xTabulate() $ x_ZipKeys(),
+		obstruction =
+			x_(party) $ xAtCol(3) $ xTabulate() $ x_ZipKeys()
+	)
 
-#| function: xReducel version: 0.1 finished: false 
+}) $
+x_AddKeys(c('Republican', 'Democrat'))
 
-xReducel <- function (f, xs) {
-	.fundef <- xAutoPartial(function (f, xs) {
-		"(a -> b -> a) -> [b] -> a
-		fold a list, starting from the left"
-		
-		pcall <- sys.call()
-		require_a("functionable", f, pcall)
-		require_a("listy", xs, pcall)
 
-		f <- match.fun(f)
-		require_a('binary function', f, pcall)
+# list(
+#     Republican =
+#         list(
+#             perjury =
+#                 list(Guilty = 12, NotGuilty = 2),
+#             obstruction =
+#                 list(Guilty = 12, NotGuilty = 2),
+#     Democrat =
+#         list(
+#             perjury =
+#                 list(NotGuilty = 12),
+#             obstruction =
+#                 list(NotGuilty = 12)
+#         )
+#     )
+# )
 
-		if (length(xs) < 2) {
-			xs
-		} else {
-			ind <- 1
-			
-			x <- xFirst(xs)
-			xs <- xRest(xs)
 
-			len_xs <- length(xs)
-
-		    while (ind <= len_xs) {
-		    	x <- f( x, xs[[ind]] )
-		    	ind <- ind + 1
-		    }
-		    x
-		}
-	})
-	
-	.args <- xArguments(FALSE)
-	xApply(.fundef, .args)	
-}
-
-#' Fold a function over a collection from right to left.
-#'
-#' @param f a binary function that returns a value that \code{f} can later take as its right argument,
-#' or a string or symbol naming such a function.
-#' @param xs a list, pairlist or vector of any length.
-#'
-#' @return an arbitrary value, depending on the function \code{f}.
-#'
-#' @section Corner Cases:
-#'     returns \code{xs} if \code{xs} is length-zero or length-one.
-#'
-#' @family arrow-folds
-#' @export
-
-#| function: xReducer version: 0.1 finished: false 
-
-xReducer <- function (f, xs) {
-	.fundef <- xAutoPartial(function (f, xs) {
-		"(a -> b -> a) -> [b] -> a
-		fold a list, starting from the left"
-		
-		pcall <- sys.call()	
-		require_a("functionable", f, pcall)
-		require_a("listy", xs, pcall)
-
-		f <- match.fun(f)
-		
-		require_a('binary function', f, pcall)
-
-		if (length(xs) < 2) {
-			xs
-		} else {
-			ind <- length(xs) - 1
-			
-			x <- xFirst(xs)
-			xs <- xRest(xs)
-
-		    while (ind > 0) {
-		    	x <- f( xs[[ind]], x )
-		    	ind <- ind - 1
-		    }
-		    x
-		}
-	})
-	
-	.args <- xArguments(FALSE)
-	xApply(.fundef, .args)	
-}
-
-#'
-#' Fold a function over a collection from left to right with an initial value, keeping intermediate values.
-#'
-#' @param f a binary function that returns a value that \code{f} can later take as its right argument,
-#' or a string or symbol naming such a function.
-#' @param x an arbitrary value.
-#' @param xs a list, pairlist or vector of any length.
-#'
-#' @return a list.
-#'
-#' @section Corner Cases:
-#'     returns \code{list(x)} if \code{xs} is length-zero.
-#'
-#' @family arrow-folds
-#' @export
-
-#| function: xScanl version: 0.1 finished: false 
-
-xScanl <- function (f, x, xs) {
-	.fundef <- xAutoPartial(function (f, x, xs) {
-		"(a -> b -> b) -> b -> [a] -> [b]
-		scan across list, starting from the right"
-		
-		pcall <- sys.call()
-		require_a("functionable", f, pcall)
-		require_a('any', x, pcall)
-		require_a("listy", xs, pcall)
-
-		f <- match.fun(f)
-		require_a('binary function', f, pcall)
-
-		if (length(xs) == 0) {
-			list(x)
-		} else {
-		
-			ith <- 1
-			ys <- vector("list", length(xs) + 1)
-			ys[[1]] <- x
-
-			while (ith <= length(xs)) {
-				
-				ys[[ith + 1]] <- f( ys[[ith]], xs[[ith]] )
-				ith <- ith + 1
-			}
-			ys
-		}
-	})
-	
-	.args <- xArguments(FALSE)
-	xApply(.fundef, .args)	
-}
-
-</code></pre>
+</pre>
 	</body>
 
 	<script type="text/javascript">
 
-		highlight.highlight_r_code()
+		highlight.highlight_r_code(".input", function (text) {
+			return "<pre class = 'example r'>" + text + "<pre>"
+		})
 
 	</script>
 </html>
