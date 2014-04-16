@@ -1,4 +1,3 @@
-
 RHighlight
 ================
 
@@ -11,11 +10,11 @@ outlining the structure and documentation of a program.
 
 *note: I wrote RHighlight when I was inexperienced at writing Javascript.*
 
-### 1 Requirements
+## 1 Requirements
 
 
 
-### 2 Installation
+## 2 Installation
 
 It is trivial to add RHighlight to your website. I'm assuming your site has a /js and /css
 subdirectory, and an index page just be below root. (if not, just adapt these instuctions
@@ -47,6 +46,11 @@ mySite [
 Now we can work on loading this content into your page. Here is an example
 document head
 
+### 2.1 Head
+
+You need to load the `rhighlight-min.js` script and a syntax theme of your choice in
+the document head. jQuery is required by RHighlight, at least at the moment.
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -54,12 +58,15 @@ document head
 	<title>My Page</title>
 
 	<script src="js/rhighlight.js" type="text/javascript"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 
 </head>
-```html
+```
 
-Then add your normal document-body, including your code tags. You should use
+Then add your normal document-body, including your code or pre tags. You should use
 a specific class for the R code you wish to highlight.
+
+### 2.2 Body
 
 ```html
 <body>
@@ -85,13 +92,16 @@ Available in fine git repositories nationwide.
 
 </body>
 ```
+
+### 2.3 Footer
+
 After the body of your document you need to call the highlighter code. Generally you
 will use `.highlight_r_code` to highlight all the elements on a page matching a jQuery
 selector.
 
-You can use a selector of your choice, but a simple method is to use a class select
+You can use a selector of your choice, but a simple method is to use a class selector
 like ".myRCodeClass". The callback function takes the highlighted code as a string,
-and lets you wrap the code in html of your choice.  You will probably want to use the
+and lets you wrap the code in html of your choice. You will probably want to use the
 same tag your R code was initially wrapped in.
 
 ```html
@@ -107,11 +117,11 @@ rhighlight.highlight_r_code(".myRCodeClass", function (text) {
 
 And that's it! Your page should now have nice syntax highlighting.
 
-### Examples
+## 3 Examples
 
 <img src = "example.png"  width ="400">
 
-### License
+## 4 License
 
 The MIT License
 
