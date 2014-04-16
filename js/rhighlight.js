@@ -368,9 +368,9 @@ rhighlight = ( function () {
 						'"': '		"' + span.close()
 					}
 				},
-				'normal': 	depth_dependent_html(depth),
-				'open_delim': 	depth_dependent_html(depth),
-				'close_delim': 	depth_dependent_html(depth),
+				'normal': 			depth_dependent_html(depth),
+				'open_delim': 			depth_dependent_html(depth),
+				'close_delim': 			depth_dependent_html(depth),
 				'comment': {
 					'normal': {
 						'\n': '\n' + span.close()
