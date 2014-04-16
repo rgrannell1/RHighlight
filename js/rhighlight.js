@@ -105,40 +105,6 @@ rhighlight = ( function () {
 			return that
 		}
 
-		var highlight_text = function (text) {
-			/* given (presumably legal) R code as a single string,
-			 return a string of higlighted R code */
-
-			var highlighted_code = ''
-			var r_state_machine = StateMachine(
-				r_transitions,
-				html_output_rules
-			)
-
-			for (var ith = 0; ith < text.length; ith++) {
-
-				var token = text.substring(ith, ith + 1)
-				highlighted_code =
-					highlighted_code + r_state_machine.consume_token(token)
-
-			}
-
-			return highlighted_code
-		}
-
-		var highlight_r_code = function (selector) {
-			/* run a state machine over all .r classes in
-			   the DOM. */
-
-			$(selector).replaceWith( function (index, content) {
-				return '<code class = "r">' +
-					highlight_text($(this).text()) +
-				'</code>'
-			} )
-
-			return self
-		}
-
 		var r_transitions = ( function () {
 			/* returns an object which contains objects - one for each possible state -
 			 which contain an active field (is this the state we're currently on?) and
