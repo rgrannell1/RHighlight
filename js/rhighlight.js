@@ -2,7 +2,7 @@
 	"use strict"
 } )()
 
-highlight = ( function () {
+rhighlight = ( function () {
 	/* global object for highlight.js (great name, huh?).
 	  released under the GLP-3, copyright Ryan Grannell. */
 
