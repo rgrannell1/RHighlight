@@ -12,7 +12,7 @@ outlining the structure and documentation of a program.
 
 ## 1 Requirements
 
-
+* jQuery.
 
 ## 2 Installation
 
@@ -57,16 +57,20 @@ the document head. jQuery is required by RHighlight, at least at the moment.
 <head>
 	<title>My Page</title>
 
-	<script src="js/rhighlight.js" type="text/javascript"></script>
+	<link href="css/mint/mint-light.css" rel='stylesheet' type="text/css">
+
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+	<script src="js/rhighlight.js" type="text/javascript"></script>
 
 </head>
 ```
+The load order is important.
+
+### 2.2 Body
+
 
 Then add your normal document-body, including your code or pre tags. You should use
 a specific class for the R code you wish to highlight.
-
-### 2.2 Body
 
 ```html
 <body>
