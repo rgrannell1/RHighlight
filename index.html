@@ -53,6 +53,8 @@ raw_clinton_vote <- "
 	R	Guilty		Guilty
 	D	NotGuilty	NotGuilty"
 
+"this is an 'inner' string"
+
 clinton_vote <-
 	x_(raw_clinton_vote) $ xToLines() $ xMap(xToWords) $
 	xZip() $ xAddKeys(c('party', 'perjury', 'obstruction'))

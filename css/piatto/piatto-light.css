@@ -1,12 +1,6 @@
 html * {
   background: white; }
 
-::selection {
-  background: #666666; }
-
-::-moz-selection {
-  background: #666666; }
-
 .r {
   color: #505050; }
 
@@ -20,10 +14,10 @@ html * {
   background: white; }
 
 .r .ssdouble {
-  color: #e67e22; }
+  color: #c35dc3; }
 
 .r .dssingle {
-  color: #e67e22; }
+  color: #c35dc3; }
 
 .r .sstring {
   color: #f37028; }
@@ -32,10 +26,10 @@ html * {
   color: #f37028; }
 
 .r .at {
-  color: #c35dc3; }
+  color: #d33682; }
 
 .r .dollar {
-  color: #c35dc3; }
+  color: #d33682; }
 
 .r .lev0 {
   color: #8ea812; }
