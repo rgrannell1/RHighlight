@@ -20,22 +20,22 @@ html * {
   background: white; }
 
 .r .ssdouble {
-  color: #c35dc3; }
+  color: #e67e22; }
 
 .r .dssingle {
-  color: #c35dc3; }
+  color: #e67e22; }
 
 .r .sstring {
-  color: #c35dc3; }
+  color: #f37028; }
 
 .r .dstring {
-  color: #c35dc3; }
+  color: #f37028; }
 
 .r .at {
-  color: #446fbd; }
+  color: #c35dc3; }
 
 .r .dollar {
-  color: #446fbd; }
+  color: #c35dc3; }
 
 .r .lev0 {
   color: #8ea812; }
