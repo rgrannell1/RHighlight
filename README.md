@@ -14,11 +14,9 @@ outlining the structure and documentation of a program.
 
 ## 2 Installation
 
-It is trivial to add RHighlight to your website. I'm assuming your site has a /js and /css
-subdirectory, and an index page just be below root. (if not, just adapt these instuctions
-to your needs).
+I'm assuming your site has a /js and /css subdirectory, and an index page just below root. (if not, just adapt these instuctions to your needs).
 
-Add the files from this repository as such:
+Arrange the files in Rhighlight like so:
 
 ```
 mySite [
@@ -41,13 +39,11 @@ mySite [
 	yourIndex.html
 ]
 ```
-Now we can work on loading this content into your page. Here is an example
-document head
 
 ### 2.1 Head
 
 You need to load the `rhighlight-min.js` script and a syntax theme of your choice in
-the document head. jQuery is required by RHighlight, at least at the moment.
+the document head. You must import jQuery as a dependency.
 
 ```html
 <!DOCTYPE html>
@@ -62,17 +58,16 @@ the document head. jQuery is required by RHighlight, at least at the moment.
 
 </head>
 ```
-The load order is important.
+The load order is significant.
 
 ### 2.2 Body
 
-
-Then add your normal document-body, including your code or pre tags. You should use
+A your normal document-body, including your code or pre tags. You should use
 a specific class for the R code you wish to highlight.
 
 ```html
 <body>
-A shameless self-plug of my library "Arrow".
+A shameless self-plug of my library "Kea".
 
 <pre class = "myRCodeClass">
 # this is a code example
@@ -97,12 +92,12 @@ Available in fine git repositories nationwide.
 
 ### 2.3 Footer
 
-After the body of your document you need to call the highlighter code. Generally you
+After the body of your document you need to call the highlighter. Generally you
 will use `.highlight_r_code` to highlight all the elements on a page matching a jQuery
 selector.
 
-You can use a selector of your choice, but a simple method is to use a class selector
-like ".myRCodeClass". The callback function takes the highlighted code as a string,
+You can use a selector of your choice, but for most cases a class selector
+like ".myRCodeClass" will suffice. The callback takes the highlighted code as a string,
 and lets you wrap the code in html of your choice. You will probably want to use the
 same tag your R code was initially wrapped in.
 
